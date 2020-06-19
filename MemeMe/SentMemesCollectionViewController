@@ -1,0 +1,88 @@
+//
+//  SentMemesCollectionCollectionCollectionViewController.swift
+//  Meme1.0
+//
+//  Created by user174050 on 6/18/20.
+//  Copyright © 2020 lama. All rights reserved.
+//
+
+import UIKit
+
+
+
+class SentMemesCollectionViewController: UICollectionViewController {
+    var memes : [Meme]!{
+                let object =  UIApplication.shared.delegate
+                let appDelegate = object as! AppDelegate
+                return appDelegate.memes
+        }
+    let numberOfItemsPerRow : CGFloat = 3.0
+    let lineSpacing : CGFloat = 5.0
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        tabBarController?.tabBar.isHidden = false
+    
+    }
+    
+        override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+         coordinator.animate(alongsideTransition: { (_) in
+            self.collectionView.collectionViewLayout.invalidateLayout()
+         }, completion: nil)
+         super.viewWillTransition(to: size, with: coordinator)
+         
+     }
+    
+    // MARK: UICollectionViewDataSource
+
+
+    override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return memes.count
+    }
+
+    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+           let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "MemedImageCell", for: indexPath) as! MemeCollectionViewCell
+               
+               let meme = memes[indexPath.item]
+               cell.memedImageView.image = meme.memedImage
+               
+               return cell
+    }
+
+    override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+         let meme = memes[indexPath.item]
+         let detailVC = storyboard?.instantiateViewController(withIdentifier: "DetailViewController") as! DetailViewController
+         detailVC.memedImage = meme.memedImage
+         tabBarController?.tabBar.isHidden = true
+         navigationController?.pushViewController(detailVC, animated: true)
+     }
+
+}
+
+extension SentMemesCollectionViewController: UICollectionViewDelegateFlowLayout{
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+      
+        var x = collectionView.frame.size.width
+    
+        let dim  = ( x - (numberOfItemsPerRow - 1.0 ) * lineSpacing)  / numberOfItemsPerRow
+        let z  = ( collectionView.frame.size.height - (numberOfItemsPerRow - 1.0 ) * lineSpacing)  / numberOfItemsPerRow
+        return CGSize(width: dim , height: z)
+        
+        
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+        return lineSpacing
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
+        return lineSpacing
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+        return UIEdgeInsets.zero
+    }
+}
+
+
